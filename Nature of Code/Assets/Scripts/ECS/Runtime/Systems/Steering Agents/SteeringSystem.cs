@@ -19,7 +19,7 @@ public partial struct SteeringSystem : ISystem
         [ReadOnly]
         public ComponentLookup<Rotation> targetRotations;
 
-        public void Execute(PhysicsBodyAspect physicsBody, ref SteeringForce steeringForce, in DynamicBuffer<SteeringData> steeringDatas, in Translation translation)
+        public void Execute(SteeringAgentAspect steeringAgent, in DynamicBuffer<SteeringData> steeringDatas)
         {
             var steeringDataArray = steeringDatas.AsNativeArray();
 
@@ -31,23 +31,9 @@ public partial struct SteeringSystem : ISystem
                     continue;
 
                 var targetDirection = math.mul(targetRotations[steeringData.target].Value, new float3(1, 0, 0));
-                var targetPos = targetTranslations[steeringData.target].Value + targetDirection * steeringData.predictionAmount;
+                var targetPos = targetTranslations[steeringData.target].Value;
 
-                var force = targetPos - translation.Value;
-
-                var distance = math.length(force);
-
-                var desiredSpeed = distance < steeringData.slowRadius
-                   ? math.remap(steeringData.slowRadius, 0, physicsBody.PhysicsData.maxSpeed, 0, distance)
-                   : physicsBody.PhysicsData.maxSpeed;
-
-                force = math.normalizesafe(force) * desiredSpeed;
-
-                force -= physicsBody.Velocity;
-
-                force = MathHelpers.ClampMagnitude(force, steeringData.maxForce);
-
-                steeringForce.value += force * steeringData.seekOrFlee;
+                steeringAgent.SteerAhead(steeringData.DNA, targetPos, targetDirection);
             }
         }
     }
@@ -67,7 +53,7 @@ public partial struct SteeringSystem : ISystem
     {
         var translationLookup = SystemAPI.GetComponentLookup<Translation>(true);
         var rotationLookup = SystemAPI.GetComponentLookup<Rotation>(true);
-    
+
         new SteeringJob
         {
             targetTranslations = translationLookup,

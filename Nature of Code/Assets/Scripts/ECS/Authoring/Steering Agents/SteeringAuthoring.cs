@@ -31,13 +31,18 @@ public class SteeringAuthoring : MonoBehaviour
             {
                 var steeringData = authoring.seekerDatas[i];
 
-                var seeker = new SteeringData
+                var steeringDNA = new SteeringDNA
                 {
-                    target = GetEntity(steeringData.target),
                     maxForce = steeringData.maxForce,
                     predictionAmount = steeringData.predictionAmount,
                     slowRadius = steeringData.slowRadius,
                     seekOrFlee = steeringData.seekOrFlee
+                };
+
+                var seeker = new SteeringData
+                {
+                    target = GetEntity(steeringData.target),
+                    DNA = steeringDNA
                 };
 
                 steeringDatas.Add(seeker);

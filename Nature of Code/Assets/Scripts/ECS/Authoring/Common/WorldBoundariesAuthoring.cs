@@ -9,7 +9,11 @@ public class WorldBoundariesAuthoring : MonoBehaviour
     {
         public override void Bake(WorldBoundariesAuthoring authoring)
         {
-            AddComponent(new WorldBoundaries { value = authoring.bounds });
+            AddComponent(new SquareWorldBounds
+            {
+                value = authoring.bounds
+
+            });
         }
     }
 }

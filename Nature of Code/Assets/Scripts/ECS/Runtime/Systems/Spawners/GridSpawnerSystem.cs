@@ -17,14 +17,14 @@ public partial struct GridSpawnerSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        foreach (var (spawner, spawnRequests) in SystemAPI.Query<GridSpawnerAspect, DynamicBuffer<SpawnRequest>>())
+        foreach (var (spawner, gridSpawner) in SystemAPI.Query<SpawnerAspect, RefRW<GridSpawner>>())
         {
-            for (int i = 0; i < spawnRequests.Length; i++)
-            {
-                spawner.Spawn(ref state, spawnRequests[i]);
-            }
+            spawner.Spawn(ref state, ref gridSpawner.ValueRW);
+        }
 
-            spawnRequests.Clear();
+        foreach (var (spawner, circularSpawner) in SystemAPI.Query<SpawnerAspect, RefRW<CircularSpawner>>())
+        {
+            spawner.Spawn(ref state, ref circularSpawner.ValueRW);
         }
     }
 }

@@ -1,31 +1,57 @@
 ﻿using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Transforms;
 
 public struct SteeringForce : IComponentData
 {
     public float3 value;
 }
 
-public struct SteeringData : IBufferElementData
+public struct SteeringDNA
 {
-    public Entity target;
-    public float maxForce;
     public float predictionAmount;
+    public float maxForce;
     public float slowRadius;
     public float seekOrFlee;
 }
 
-public struct TargetSeeker : IBufferElementData
+public struct SteeringData : IBufferElementData
 {
-    public float searchRadius;
+    public Entity target;
+    public SteeringDNA DNA;
 }
 
-public enum TargetTypeEnum
+public readonly partial struct SteeringAgentAspect : IAspect
 {
-    Food, Poison
-}
+    readonly RefRW<SteeringForce> steeringForce;
+    readonly RefRO<Translation> translation;
+    readonly RefRO<Velocity> velocity;
+    readonly RefRO<PhysicsData> physicsData;
 
-public struct TargetType : IComponentData
-{
-    public TargetTypeEnum value;
+    public void Steer(in SteeringDNA steeringDNA, float3 targetPosition)
+    {
+        var force = targetPosition - translation.ValueRO.Value;
+
+        var distance = math.length(force);
+
+        var maxSpeed = physicsData.ValueRO.maxSpeed;
+
+        var desiredSpeed = distance < steeringDNA.slowRadius
+           ? math.remap(steeringDNA.slowRadius, 0, maxSpeed, 0, distance)
+           : maxSpeed;
+
+        force = MathUtils.SetMagnitude(force, desiredSpeed);
+
+        force -= velocity.ValueRO.value;
+
+        force = MathUtils.ClampMagnitude(force, steeringDNA.maxForce);
+
+        steeringForce.ValueRW.value += force * steeringDNA.seekOrFlee;
+    }
+
+    public void SteerAhead(in SteeringDNA steeringDNA, float3 targetPosition, float3 targetDirection)
+    {
+        targetPosition += targetDirection * steeringDNA.predictionAmount;
+        Steer(steeringDNA, targetPosition);
+    }
 }

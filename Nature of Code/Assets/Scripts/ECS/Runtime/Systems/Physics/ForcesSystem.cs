@@ -12,7 +12,7 @@ public partial class ForcesSystem : SystemBase
     private partial struct AddForcesJob : IJobEntity
     {
         public GlobalForceSettings forceSettings;
-        public WorldBoundaries worldBoundaries;
+        public SquareWorldBounds worldBoundaries;
         public float2 mousePosition;
         public bool mousePressed;
 
@@ -35,7 +35,7 @@ public partial class ForcesSystem : SystemBase
 
     protected override void OnCreate()
     {
-        RequireForUpdate<WorldBoundaries>();
+        RequireForUpdate<SquareWorldBounds>();
         RequireForUpdate<GlobalForceSettings>();
         RequireForUpdate<MousePosition>();
     }
@@ -45,7 +45,7 @@ public partial class ForcesSystem : SystemBase
         new AddForcesJob
         {
             forceSettings = GetSingleton<GlobalForceSettings>(),
-            worldBoundaries = GetSingleton<WorldBoundaries>(),
+            worldBoundaries = GetSingleton<SquareWorldBounds>(),
             mousePosition = GetSingleton<MousePosition>().value,
             mousePressed = Input.GetMouseButton(0)
 

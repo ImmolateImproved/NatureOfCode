@@ -1,9 +1,15 @@
-﻿using Unity.Collections;
+﻿using System.Linq;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 
-public struct GridSpawner : IComponentData
+public interface ISpawner
+{
+    float3 GetNextSpawnPosition();
+}
+
+public struct GridSpawner : IComponentData, ISpawner
 {
     public float3 minPosition;
     public float3 maxPosition;
@@ -11,9 +17,26 @@ public struct GridSpawner : IComponentData
 
     public Random random;
 
-    public float3 GetNextPosition()
+    public float3 GetNextSpawnPosition()
     {
         return random.NextFloat3(minPosition, maxPosition) + offset;
+    }
+}
+
+public struct CircularSpawner : IComponentData, ISpawner
+{
+    public float3 center;
+    public float maxRadius;
+
+    public Random random;
+
+    public float3 GetNextSpawnPosition()
+    {
+        var radius = random.NextFloat(maxRadius);
+
+        var point = random.NextFloat2Direction() * radius;
+
+        return math.float3(point, 0) + center;
     }
 }
 
@@ -24,25 +47,39 @@ public struct SpawnRequest : IBufferElementData
     public int count;
 }
 
-public readonly partial struct GridSpawnerAspect : IAspect
+public readonly partial struct SpawnerAspect : IAspect
 {
-    readonly RefRW<GridSpawner> spawner;
+    readonly DynamicBuffer<SpawnRequest> spawnRequestBuffer;
 
-    public void Init(int index)
+    public int SpawnRequestCount => spawnRequestBuffer.Length;
+
+    public void Spawn<T>(ref SystemState state, ref T spawner) where T : ISpawner
     {
-        spawner.ValueRW.random = Random.CreateFromIndex((uint)index);
+        for (int i = 0; i < SpawnRequestCount; i++)
+        {
+            Spawn(ref state, ref spawner, i);
+        }
+
+        Clear();
     }
 
-    public NativeArray<Entity> Spawn(ref SystemState state, in SpawnRequest spawnRequest)
+    public NativeArray<Entity> Spawn<T>(ref SystemState state, ref T spawner, int spawnRequestIndex) where T : ISpawner
     {
+        var spawnRequest = spawnRequestBuffer[spawnRequestIndex];
+
         var entities = state.EntityManager.Instantiate(spawnRequest.prefab, spawnRequest.count, Allocator.Temp);
 
         for (int i = 0; i < entities.Length; i++)
         {
-            var randomPosition = spawner.ValueRW.GetNextPosition();
+            var randomPosition = spawner.GetNextSpawnPosition();
             state.EntityManager.SetComponentData(entities[i], new Translation { Value = randomPosition });
         }
 
         return entities;
+    }
+
+    public void Clear()
+    {
+        spawnRequestBuffer.Clear();
     }
 }

@@ -71,7 +71,7 @@ public readonly partial struct PhysicsBodyAspect : IAspect
         var acceleration = ResultantForce / PhysicsData.mass;
 
         Velocity += acceleration;// * deltaTime;
-        Velocity = MathHelpers.ClampMagnitude(Velocity, PhysicsData.maxSpeed);
+        Velocity = MathUtils.ClampMagnitude(Velocity, PhysicsData.maxSpeed);
 
         translation.Value += Velocity * deltaTime;
 
@@ -85,7 +85,7 @@ public readonly partial struct PhysicsBodyAspect : IAspect
         ResultantForce += weight;
     }
 
-    public void AddFriction(in Translation translation, in NonUniformScale scale, in WorldBoundaries worldBoundaries)
+    public void AddFriction(in Translation translation, in NonUniformScale scale, in SquareWorldBounds worldBoundaries)
     {
         var diff = (translation.Value.y - scale.Value.x / 2) + worldBoundaries.value.y;
 

@@ -152,14 +152,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d218e41b4ec2b694b94c591695e9418d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minPosition: {x: -40, y: 15, z: 0}
-  maxPosition: {x: 40, y: -15, z: 0}
+  spawnerType: 0
+  minPosition: {x: -30, y: 25, z: 0}
+  maxPosition: {x: 30, y: -25, z: 0}
+  maxRadius: 30
   offset: {x: 0, y: 0, z: 0}
   spawnRequests:
   - prefab: {fileID: 2943935801606489530, guid: 6d147390a7ace54489ddde001c85a391, type: 3}
-    count: 10
+    count: 20
   - prefab: {fileID: 8445613562341620040, guid: 4ace277525b03a54c8e6bd081f7935c5, type: 3}
-    count: 10
+    count: 20
 --- !u!4 &572046710
 Transform:
   m_ObjectHideFlags: 0
@@ -266,7 +268,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2052684697
 GameObject:
@@ -277,27 +279,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2052684699}
-  - component: {fileID: 2052684698}
+  - component: {fileID: 2052684700}
   m_Layer: 0
-  m_Name: Bounds
+  m_Name: OutOfBoundsSteerSettings
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2052684698
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2052684697}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0032820aa785ee40b37a1aaefd319d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bounds: {x: 40, y: 15}
 --- !u!4 &2052684699
 Transform:
   m_ObjectHideFlags: 0
@@ -311,8 +300,23 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2052684700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2052684697}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80579dd91a784e04991101d72db93e26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  center: {x: 0, y: 0, z: 0}
+  radius: 35
+  steeringForce: 1
 --- !u!1001 &2057738356
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -355,11 +359,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -5907271053552348628, guid: d57a643065b8c0d43a574667f58fd33c, type: 3}
       propertyPath: seekerDatas.Array.data[0].maxForce
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -5907271053552348628, guid: d57a643065b8c0d43a574667f58fd33c, type: 3}
       propertyPath: seekerDatas.Array.data[1].maxForce
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -5907271053552348628, guid: d57a643065b8c0d43a574667f58fd33c, type: 3}
       propertyPath: seekerDatas.Array.data[0].seekOrFlee
