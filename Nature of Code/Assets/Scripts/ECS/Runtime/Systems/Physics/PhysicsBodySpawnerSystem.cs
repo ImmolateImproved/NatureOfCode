@@ -2,6 +2,7 @@
 using Unity.Mathematics;
 using Unity.Transforms;
 
+[UpdateInGroup(typeof(InitializationSystemGroup))]
 public partial class PhysicsBodySpawnerSystem : SystemBase
 {
     private Random random;

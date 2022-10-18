@@ -27,7 +27,6 @@ public struct GlobalForceSettings : IComponentData
 
 public struct PhysicsData : IComponentData
 {
-    public float maxSpeed;
     public float mass;
     public float coeffOfFriction;
     public float coeffOfDrag;
@@ -41,6 +40,7 @@ public struct ResultantForce : IComponentData
 public struct Velocity : IComponentData
 {
     public float3 value;
+    public float maxSpeed;
 }
 
 public readonly partial struct PhysicsBodyAspect : IAspect
@@ -61,6 +61,12 @@ public readonly partial struct PhysicsBodyAspect : IAspect
         set => velocity.ValueRW.value = value;
     }
 
+    public float MaxSpeed
+    {
+        get => velocity.ValueRO.maxSpeed;
+        set => velocity.ValueRW.maxSpeed = value;
+    }
+
     public PhysicsData PhysicsData
     {
         get => physicsData.ValueRO;
@@ -71,7 +77,7 @@ public readonly partial struct PhysicsBodyAspect : IAspect
         var acceleration = ResultantForce / PhysicsData.mass;
 
         Velocity += acceleration;// * deltaTime;
-        Velocity = MathUtils.ClampMagnitude(Velocity, PhysicsData.maxSpeed);
+        Velocity = MathUtils.ClampMagnitude(Velocity, MaxSpeed);
 
         translation.Value += Velocity * deltaTime;
 

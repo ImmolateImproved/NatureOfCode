@@ -2,6 +2,7 @@
 using Unity.Entities;
 
 [BurstCompile]
+[UpdateInGroup(typeof(InitializationSystemGroup))]
 public partial struct GridSpawnerSystem : ISystem
 {
     public void OnCreate(ref SystemState state)

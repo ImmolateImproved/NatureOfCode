@@ -1,6 +1,7 @@
 using Unity.Entities;
 using UnityEngine;
 
+[UpdateInGroup(typeof(InitializationSystemGroup))]
 public partial class MousePositionSystem : SystemBase
 {
     protected override void OnUpdate()

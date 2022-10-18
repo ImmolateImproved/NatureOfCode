@@ -7,7 +7,6 @@ using UnityEngine;
 
 [BurstCompile]
 [UpdateBefore(typeof(RotateTowardsVelocitySystem))]
-[UpdateAfter(typeof(GridSpawnerSystem))]
 public partial struct SteeringSystem : ISystem
 {
     [BurstCompile]

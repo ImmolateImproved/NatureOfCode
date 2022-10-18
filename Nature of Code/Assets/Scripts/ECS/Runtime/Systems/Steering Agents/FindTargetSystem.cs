@@ -1,12 +1,13 @@
 ﻿using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 
 [BurstCompile]
 [UpdateBefore(typeof(SteeringSystem))]
-[UpdateAfter(typeof(GridSpawnerSystem))]
 public partial struct FindTargetSystem : ISystem
 {
     [BurstCompile]
@@ -29,16 +30,17 @@ public partial struct FindTargetSystem : ISystem
         var targetPositions = targetsQuery.ToComponentDataArray<Translation>(Allocator.TempJob);
         var targetTypes = targetsQuery.ToComponentDataArray<TargetType>(Allocator.TempJob);
 
-        new FindTargetJob
+        state.Dependency = new FindTargetJob
         {
             targetEntities = targetEntities,
             targetPositions = targetPositions,
             targetTypes = targetTypes
 
-        }.Run();
+        }.ScheduleParallel(state.Dependency);
 
-        targetEntities.Dispose();
-        targetPositions.Dispose();
+        targetEntities.Dispose(state.Dependency);
+        targetPositions.Dispose(state.Dependency);
+        targetTypes.Dispose(state.Dependency);
     }
 
     [BurstCompile]

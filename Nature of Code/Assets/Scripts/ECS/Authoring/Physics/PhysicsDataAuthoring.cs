@@ -31,15 +31,15 @@ public class PhysicsDataAuthoring : MonoBehaviour
             {
                 mass = authoring.mass,
                 coeffOfFriction = authoring.coeffOfFriction,
-                coeffOfDrag = authoring.coeffOfDrag,
-                maxSpeed = authoring.maxSpeed
+                coeffOfDrag = authoring.coeffOfDrag
             });
 
             AddComponent(new ResultantForce { });
 
             AddComponent(new Velocity
             {
-                value = new Vector3(authoring.initialVelocity.x, authoring.initialVelocity.y, 0)
+                value = new Vector3(authoring.initialVelocity.x, authoring.initialVelocity.y, 0),
+                maxSpeed = authoring.maxSpeed
             });
 
             if (authoring.applyNaturalForces)

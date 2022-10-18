@@ -26,7 +26,6 @@ public readonly partial struct SteeringAgentAspect : IAspect
     readonly RefRW<SteeringForce> steeringForce;
     readonly RefRO<Translation> translation;
     readonly RefRO<Velocity> velocity;
-    readonly RefRO<PhysicsData> physicsData;
 
     public void Steer(in SteeringDNA steeringDNA, float3 targetPosition)
     {
@@ -34,7 +33,7 @@ public readonly partial struct SteeringAgentAspect : IAspect
 
         var distance = math.length(force);
 
-        var maxSpeed = physicsData.ValueRO.maxSpeed;
+        var maxSpeed = velocity.ValueRO.maxSpeed;
 
         var desiredSpeed = distance < steeringDNA.slowRadius
            ? math.remap(steeringDNA.slowRadius, 0, maxSpeed, 0, distance)

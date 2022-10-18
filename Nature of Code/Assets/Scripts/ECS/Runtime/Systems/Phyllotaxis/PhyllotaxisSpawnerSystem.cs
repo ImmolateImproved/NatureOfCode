@@ -4,6 +4,7 @@ using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
 
+[UpdateInGroup(typeof(InitializationSystemGroup))]
 public partial class PhyllotaxisSpawnerSystem : SystemBase
 {
     protected override void OnUpdate()

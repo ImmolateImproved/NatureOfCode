@@ -33,7 +33,7 @@ Transform:
   - {fileID: 3310740918052584}
   - {fileID: 5727038075447035513}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3597532906746514923
 MonoBehaviour:
@@ -50,7 +50,7 @@ MonoBehaviour:
   mass: 1
   coeffOfFriction: 0
   coeffOfDrag: 0
-  maxSpeed: 0
+  maxSpeed: 10
   initialVelocity: {x: 0, y: 0}
   isAttractor: 0
   applyNaturalForces: 0
@@ -66,9 +66,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49f9bc0a1b7bbf14d9e490c05d34839e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 0}
-  maxForce: 1
-  flee: 0
+  seekerDatas:
+  - target: {fileID: 0}
+    maxForce: 0.7
+    predictionAmount: 0
+    slowRadius: 0
+    seekOrFlee: 1
+    searchRadius: 25
+  - target: {fileID: 0}
+    maxForce: 1
+    predictionAmount: 0
+    slowRadius: 0
+    seekOrFlee: -1
+    searchRadius: 4
 --- !u!1 &5488158191679498248
 GameObject:
   m_ObjectHideFlags: 0
