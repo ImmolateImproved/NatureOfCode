@@ -17,7 +17,6 @@ public struct SteeringDNA
 
 public struct SteeringData : IBufferElementData
 {
-    public Entity target;
     public SteeringDNA DNA;
 }
 

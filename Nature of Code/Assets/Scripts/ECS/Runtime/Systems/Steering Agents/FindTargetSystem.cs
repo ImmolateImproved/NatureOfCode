@@ -1,10 +1,9 @@
 ﻿using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
-using Unity.Jobs;
 using Unity.Mathematics;
+using Unity.Physics;
 using Unity.Transforms;
-using UnityEngine;
 
 [BurstCompile]
 [UpdateBefore(typeof(SteeringSystem))]
@@ -55,16 +54,16 @@ public partial struct FindTargetSystem : ISystem
         [ReadOnly]
         public NativeArray<TargetType> targetTypes;
 
-        public void Execute(in TransformAspect transform, in DynamicBuffer<TargetSeeker> seekerBuffer, DynamicBuffer<SteeringData> steeringDataBuffer)
+        public void Execute(in TransformAspect transform, ref DynamicBuffer<TargetSeeker> seekerBuffer)
         {
-            var distances = new NativeArray<float>(steeringDataBuffer.Length, Allocator.Temp);
+            var distances = new NativeArray<float>(seekerBuffer.Length, Allocator.Temp);
 
             for (int i = 0; i < distances.Length; i++)
             {
                 distances[i] = math.INFINITY;
             }
 
-            var newTargetEntity = new NativeArray<Entity>(steeringDataBuffer.Length, Allocator.Temp);
+            var newTargetEntity = new NativeArray<Entity>(seekerBuffer.Length, Allocator.Temp);
 
             for (int i = 0; i < targetEntities.Length; i++)
             {
@@ -80,9 +79,34 @@ public partial struct FindTargetSystem : ISystem
                 }
             }
 
-            for (int i = 0; i < steeringDataBuffer.Length; i++)
+            for (int i = 0; i < seekerBuffer.Length; i++)
             {
-                steeringDataBuffer.ElementAt(i).target = newTargetEntity[i];
+                seekerBuffer.ElementAt(i).target = newTargetEntity[i];
+            }
+        }
+    }
+
+    [BurstCompile]
+    partial struct FindTargetWithUnityPhysicsJob : IJobEntity
+    {
+        [ReadOnly]
+        public PhysicsWorldSingleton physicsWorld;
+
+        public void Execute(in Translation translation, in DynamicBuffer<TargetSeeker> seeker)
+        {
+            for (int i = 0; i < seeker.Length; i++)
+            {
+                var input = new PointDistanceInput
+                {
+                    Filter = seeker[i].layers,
+                    MaxDistance = seeker[i].searchRadius,
+                    Position = translation.Value
+                };
+
+                if (physicsWorld.CalculateDistance(input, out var closet))
+                {
+                    seeker.ElementAt(i).target = closet.Entity;
+                }
             }
         }
     }

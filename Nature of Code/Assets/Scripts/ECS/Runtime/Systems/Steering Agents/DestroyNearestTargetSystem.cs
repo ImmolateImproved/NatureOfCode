@@ -24,21 +24,16 @@ public partial struct DestroyNearestTargetSystem : ISystem
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        var targetsQuery = SystemAPI.QueryBuilder().WithAll<Translation, TargetType>().Build();
-
-        var targetEntities = targetsQuery.ToEntityArray(Allocator.TempJob);
-        var targetPositions = targetsQuery.ToComponentDataArray<Translation>(Allocator.TempJob);
+        var translationLookup = SystemAPI.GetComponentLookup<Translation>(true);
+        var targetInRangeLookup = SystemAPI.GetComponentLookup<TargetInRangeTag>();
 
         state.Dependency = new DestroyNearestTargetJob
         {
-            targetEntities = targetEntities,
-            targetPositions = targetPositions,
-            ecb = ecb.AsParallelWriter()
+            ecb = ecb.AsParallelWriter(),
+            translationLookup = translationLookup,
+            targetInRangeLookup = targetInRangeLookup
 
         }.ScheduleParallel(state.Dependency);
-
-        targetEntities.Dispose(state.Dependency);
-        targetPositions.Dispose(state.Dependency);
     }
 
     [BurstCompile]
@@ -46,22 +41,33 @@ public partial struct DestroyNearestTargetSystem : ISystem
     partial struct DestroyNearestTargetJob : IJobEntity
     {
         [ReadOnly]
-        public NativeArray<Entity> targetEntities;
+        public ComponentLookup<Translation> translationLookup;
 
-        [ReadOnly]
-        public NativeArray<Translation> targetPositions;
+        [NativeDisableParallelForRestriction]
+        public ComponentLookup<TargetInRangeTag> targetInRangeLookup;
 
         public EntityCommandBuffer.ParallelWriter ecb;
 
-        public void Execute([ChunkIndexInQuery] int chunkIndex, in Translation translation)
+        public void Execute(Entity e, [ChunkIndexInQuery] int chunkIndex, in Translation translation, in DynamicBuffer<TargetSeeker> targetSeeker)
         {
-            for (int i = 0; i < targetEntities.Length; i++)
+            for (int i = 0; i < targetSeeker.Length; i++)
             {
-                var dist = math.distance(translation.Value, targetPositions[i].Value);
+                var target = targetSeeker[i].target;
+
+                if (!translationLookup.HasComponent(target))
+                    continue;
+
+                var dist = math.distance(translation.Value, translationLookup[target].Value);
 
                 if (dist < 1)
                 {
-                    ecb.DestroyEntity(chunkIndex, targetEntities[i]);
+                    targetInRangeLookup.SetComponentEnabled(e, true);
+                    targetInRangeLookup[e] = new TargetInRangeTag
+                    {
+                        targetType = (TargetTypeEnum)i 
+                    };
+
+                    ecb.DestroyEntity(chunkIndex, target);
                 }
             }
         }

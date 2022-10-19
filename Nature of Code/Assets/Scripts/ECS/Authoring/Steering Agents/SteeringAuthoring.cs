@@ -1,5 +1,7 @@
 using Unity.Entities;
+using Unity.Physics.Authoring;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 [System.Serializable]
 public struct SteeringAgentData
@@ -12,6 +14,9 @@ public struct SteeringAgentData
     public float seekOrFlee;
 
     public float searchRadius;
+
+    public PhysicsCategoryTags belongsTo;
+    public PhysicsCategoryTags collidesWith;
 }
 
 public class SteeringAuthoring : MonoBehaviour
@@ -23,6 +28,7 @@ public class SteeringAuthoring : MonoBehaviour
         public override void Bake(SteeringAuthoring authoring)
         {
             AddComponent(new SteeringForce());
+            AddComponent(new TargetInRangeTag());
             var seekerDatas = AddBuffer<TargetSeeker>();
 
             var steeringDatas = AddBuffer<SteeringData>();
@@ -41,7 +47,6 @@ public class SteeringAuthoring : MonoBehaviour
 
                 var seeker = new SteeringData
                 {
-                    target = GetEntity(steeringData.target),
                     DNA = steeringDNA
                 };
 
@@ -49,7 +54,13 @@ public class SteeringAuthoring : MonoBehaviour
 
                 seekerDatas.Add(new TargetSeeker
                 {
-                    searchRadius = authoring.seekerDatas[i].searchRadius
+                    target = GetEntity(steeringData.target),
+                    searchRadius = authoring.seekerDatas[i].searchRadius,
+                    layers = new Unity.Physics.CollisionFilter
+                    {
+                        BelongsTo = authoring.seekerDatas[i].belongsTo.Value,
+                        CollidesWith = authoring.seekerDatas[i].collidesWith.Value
+                    }
 
                 });
             }

@@ -8,17 +8,6 @@ using Unity.Transforms;
 public partial struct RotateTowardsVelocitySystem : ISystem
 {
     [BurstCompile]
-    partial struct RotateTowardsVelocityJob : IJobEntity
-    {
-        public void Execute(TransformAspect transform, in Velocity velocity)
-        {
-            var lookDir = velocity.value;
-            float angle = math.atan2(lookDir.y, lookDir.x);
-            transform.Rotation = quaternion.Euler(0, 0, angle);
-        }
-    }
-
-    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
 
@@ -36,5 +25,16 @@ public partial struct RotateTowardsVelocitySystem : ISystem
         {
 
         }.ScheduleParallel();
+    }
+
+    [BurstCompile]
+    partial struct RotateTowardsVelocityJob : IJobEntity
+    {
+        public void Execute(TransformAspect transform, in Velocity velocity)
+        {
+            var lookDir = velocity.value;
+            float angle = math.atan2(lookDir.y, lookDir.x);
+            transform.Rotation = quaternion.Euler(0, 0, angle);
+        }
     }
 }

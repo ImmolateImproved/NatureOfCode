@@ -159,11 +159,11 @@ MonoBehaviour:
   offset: {x: 0, y: 0, z: 0}
   spawnRequests:
   - prefab: {fileID: 2943935801606489530, guid: 6d147390a7ace54489ddde001c85a391, type: 3}
-    count: 300
-  - prefab: {fileID: 8445613562341620040, guid: 4ace277525b03a54c8e6bd081f7935c5, type: 3}
+    count: 1000
+  - prefab: {fileID: 2140678988757800765, guid: 4ace277525b03a54c8e6bd081f7935c5, type: 3}
     count: 100
   - prefab: {fileID: 2943935801606489530, guid: d57a643065b8c0d43a574667f58fd33c, type: 3}
-    count: 20
+    count: 25
 --- !u!4 &572046710
 Transform:
   m_ObjectHideFlags: 0

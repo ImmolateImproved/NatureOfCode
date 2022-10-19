@@ -24,3 +24,13 @@ public struct OutOfBoundSteering : IComponentData
 
     public float steeringForce;
 }
+
+public struct Health : IComponentData
+{
+    public float max;
+    public float current;
+    public float hpPerKill;
+    public float decreasePerSeconds;
+
+    public Color fullHpColor;
+}

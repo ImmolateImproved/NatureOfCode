@@ -18,21 +18,21 @@ public partial struct SteeringSystem : ISystem
         [ReadOnly]
         public ComponentLookup<Rotation> targetRotations;
 
-        public void Execute(SteeringAgentAspect steeringAgent, in DynamicBuffer<SteeringData> steeringDatas)
+        public void Execute(SteeringAgentAspect steeringAgent, in DynamicBuffer<TargetSeeker> seeker, in DynamicBuffer<SteeringData> steeringDatas)
         {
-            var steeringDataArray = steeringDatas.AsNativeArray();
+            var seekerArray = seeker.AsNativeArray();
 
-            for (int i = 0; i < steeringDataArray.Length; i++)
+            for (int i = 0; i < seekerArray.Length; i++)
             {
-                var steeringData = steeringDataArray[i];
+                var seekerData = seekerArray[i];
 
-                if (!targetTranslations.HasComponent(steeringData.target))
+                if (!targetTranslations.HasComponent(seekerData.target))
                     continue;
 
-                var targetDirection = math.mul(targetRotations[steeringData.target].Value, new float3(1, 0, 0));
-                var targetPos = targetTranslations[steeringData.target].Value;
+                var targetDirection = math.mul(targetRotations[seekerData.target].Value, new float3(1, 0, 0));
+                var targetPos = targetTranslations[seekerData.target].Value;
 
-                steeringAgent.SteerAhead(steeringData.DNA, targetPos, targetDirection);
+                steeringAgent.SteerAhead(steeringDatas[i].DNA, targetPos, targetDirection);
             }
         }
     }
