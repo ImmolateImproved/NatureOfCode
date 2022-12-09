@@ -54,10 +54,8 @@ public partial class WaveSpawnerSystem : SystemBase
                 {
                     var posX = spawner.xStartPos + j;
 
-                    var translation = new Translation { Value = new float3(posX, 0, 0) };
-
                     var waveElement = waveElements[j];
-                    EntityManager.SetComponentData(waveElement, translation);
+                    EntityManager.SetComponentData(waveElement, LocalTransform.FromPosition(new float3(posX, 0, 0)));
 
                     waveElementPositions[0].waveElementPositions.Add(new float2(posX, 0));
                     waveElementEntities[0].waveElements.Add(waveElement);
@@ -78,10 +76,8 @@ public partial class WaveSpawnerSystem : SystemBase
                     {
                         var posX = spawner.xStartPos + j;
 
-                        var translation = new Translation { Value = new float3(posX, 0, 0) };
-
                         var waveElement = waveElements[j];
-                        EntityManager.SetComponentData(waveElement, translation);
+                        EntityManager.SetComponentData(waveElement, LocalTransform.FromPosition(new float3(posX, 0, 0)));
 
                         waveElementPositions[i].waveElementPositions.Add(new float2(posX, 0));
                         waveElementEntities[i].waveElements.Add(waveElement);

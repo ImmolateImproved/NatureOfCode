@@ -28,12 +28,12 @@ public partial class PhysicsBodySpawnerSystem : SystemBase
                 var position = direction * length;
                 var position3D = new float3(position, 0);
 
-                var velocity = GetComponent<Velocity>(spawner.prefab);
+                var velocity = SystemAPI.GetComponent<Velocity>(spawner.prefab);
                 //physicsData.mass = UnityEngine.Random.Range(0, 8);
                 velocity.value = math.cross(math.normalize(position3D), new float3(0, 0, 1)) * spawner.startSpeed;
 
                 var e = ecb.Instantiate(spawner.prefab);
-                ecb.SetComponent(e, new Translation { Value = position3D });
+                ecb.SetComponent(e, LocalTransform.FromPosition(position3D));
                 ecb.SetComponent(e, velocity);
             }
 

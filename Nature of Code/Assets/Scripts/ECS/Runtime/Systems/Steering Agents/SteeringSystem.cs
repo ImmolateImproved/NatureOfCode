@@ -9,32 +9,31 @@ using UnityEngine;
 [UpdateBefore(typeof(RotateTowardsVelocitySystem))]
 public partial struct SteeringSystem : ISystem
 {
-    [BurstCompile]
-    partial struct SteeringJob : IJobEntity
+    public void OnCreate(ref SystemState state)
     {
-        [ReadOnly]
-        public ComponentLookup<Translation> targetTranslations;
 
-        [ReadOnly]
-        public ComponentLookup<Rotation> targetRotations;
+    }
 
-        public void Execute(SteeringAgentAspect steeringAgent, in DynamicBuffer<TargetSeeker> seeker, in DynamicBuffer<SteeringData> steeringDatas)
+    public void OnDestroy(ref SystemState state)
+    {
+
+    }
+
+    [BurstCompile]
+    public void OnUpdate(ref SystemState state)
+    {
+        var transformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true);
+
+        new SteeringJob
         {
-            var seekerArray = seeker.AsNativeArray();
+            transformLookup = transformLookup
 
-            for (int i = 0; i < seekerArray.Length; i++)
-            {
-                var seekerData = seekerArray[i];
+        }.ScheduleParallel();
 
-                if (!targetTranslations.HasComponent(seekerData.target))
-                    continue;
+        new ApplySteeringForceJob
+        {
 
-                var targetDirection = math.mul(targetRotations[seekerData.target].Value, new float3(1, 0, 0));
-                var targetPos = targetTranslations[seekerData.target].Value;
-
-                steeringAgent.SteerAhead(steeringDatas[i].DNA, targetPos, targetDirection);
-            }
-        }
+        }.ScheduleParallel();
     }
 
     [BurstCompile]
@@ -48,31 +47,27 @@ public partial struct SteeringSystem : ISystem
     }
 
     [BurstCompile]
-    public void OnUpdate(ref SystemState state)
+    partial struct SteeringJob : IJobEntity
     {
-        var translationLookup = SystemAPI.GetComponentLookup<Translation>(true);
-        var rotationLookup = SystemAPI.GetComponentLookup<Rotation>(true);
+        [ReadOnly]
+        public ComponentLookup<LocalTransform> transformLookup;
 
-        new SteeringJob
+        public void Execute(SteeringAgentAspect steeringAgent, in DynamicBuffer<TargetSeeker> seeker, in DynamicBuffer<SteeringData> steeringDatas)
         {
-            targetTranslations = translationLookup,
-            targetRotations = rotationLookup
+            var seekerArray = seeker.AsNativeArray();
 
-        }.ScheduleParallel();
+            for (int i = 0; i < seekerArray.Length; i++)
+            {
+                var seekerData = seekerArray[i];
 
-        new ApplySteeringForceJob
-        {
+                if (!transformLookup.HasComponent(seekerData.target))
+                    continue;
 
-        }.ScheduleParallel();
-    }
+                var targetDirection = transformLookup[seekerData.target].Forward();
+                var targetPos = transformLookup[seekerData.target].Position;
 
-    public void OnCreate(ref SystemState state)
-    {
-
-    }
-
-    public void OnDestroy(ref SystemState state)
-    {
-
+                steeringAgent.SteerAhead(steeringDatas[i].DNA, targetPos, targetDirection);
+            }
+        }
     }
 }

@@ -10,9 +10,9 @@ public partial struct ApplyForceSystem : ISystem
     {
         public float dt;
 
-        public void Execute(ref Translation translation, PhysicsBodyAspect physicsBody)
+        public void Execute(ref LocalTransform transfrom, PhysicsBodyAspect physicsBody)
         {
-            physicsBody.ApplyVelocity(ref translation, dt);
+            physicsBody.ApplyVelocity(ref transfrom, dt);
         }
     }
 

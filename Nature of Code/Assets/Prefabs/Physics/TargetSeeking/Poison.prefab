@@ -16,6 +16,14 @@ PrefabInstance:
       propertyPath: m_Material.m_BelongsToCategories.m_Value.Category02
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1562688748096772079, guid: 6d147390a7ace54489ddde001c85a391, type: 3}
+      propertyPath: m_Material.m_BelongsToCategories.m_Value.Category01
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1562688748096772079, guid: 6d147390a7ace54489ddde001c85a391, type: 3}
+      propertyPath: m_Material.m_BelongsToCategories.m_Value.Category02
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1730644358682313109, guid: 6d147390a7ace54489ddde001c85a391, type: 3}
       propertyPath: overrideList.Array.data[0].value.x
       value: 0.7058824

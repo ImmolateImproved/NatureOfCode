@@ -16,7 +16,7 @@ public partial class ForcesSystem : SystemBase
         public float2 mousePosition;
         public bool mousePressed;
 
-        public void Execute(PhysicsBodyAspect physicsBody, in Translation translation, in NonUniformScale scale)
+        public void Execute(PhysicsBodyAspect physicsBody, in LocalTransform transform)
         {
             if (mousePressed)
             {
@@ -28,7 +28,7 @@ public partial class ForcesSystem : SystemBase
             }
 
             physicsBody.AddGravity(forceSettings);
-            physicsBody.AddFriction(translation, scale, worldBoundaries);
+            physicsBody.AddFriction(transform, worldBoundaries);
             physicsBody.AddDrag();
         }
     }
@@ -44,9 +44,9 @@ public partial class ForcesSystem : SystemBase
     {
         new AddForcesJob
         {
-            forceSettings = GetSingleton<GlobalForceSettings>(),
-            worldBoundaries = GetSingleton<SquareWorldBounds>(),
-            mousePosition = GetSingleton<MousePosition>().value,
+            forceSettings = SystemAPI.GetSingleton<GlobalForceSettings>(),
+            worldBoundaries = SystemAPI.GetSingleton<SquareWorldBounds>(),
+            mousePosition = SystemAPI.GetSingleton<MousePosition>().value,
             mousePressed = Input.GetMouseButton(0)
 
         }.Run();

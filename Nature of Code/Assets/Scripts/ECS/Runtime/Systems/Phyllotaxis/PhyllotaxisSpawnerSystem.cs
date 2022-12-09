@@ -30,7 +30,7 @@ public partial class PhyllotaxisSpawnerSystem : SystemBase
                 };
 
                 var e = ecb.Instantiate(spawner.prefab);
-                ecb.SetComponent(e, new Translation { Value = new float3(x, y, 0) });
+                ecb.SetComponent(e, LocalTransform.FromPosition(new float3(x, y, 0)));
                 ecb.SetComponent(e, color);
 
                 spawner.n++;

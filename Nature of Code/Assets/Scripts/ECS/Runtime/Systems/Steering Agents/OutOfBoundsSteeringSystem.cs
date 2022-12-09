@@ -35,9 +35,9 @@ public partial struct OutOfBoundsSteeringSystem : ISystem
     {
         public OutOfBoundSteering outOfBoundSteeringData;
 
-        public void Execute(SteeringAgentAspect steeringAgentAspect, in Translation translation)
+        public void Execute(SteeringAgentAspect steeringAgentAspect, in LocalTransform transform)
         {
-            if (math.distancesq(translation.Value, outOfBoundSteeringData.center) > outOfBoundSteeringData.radiusSq)
+            if (math.distancesq(transform.Position, outOfBoundSteeringData.center) > outOfBoundSteeringData.radiusSq)
             {
                 var steeringDNA = new SteeringDNA
                 {

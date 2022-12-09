@@ -118,7 +118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 860fe2eee48e31444bb2efa4da404156, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mass: 1
+  mass: 15
   coeffOfFriction: 0
   coeffOfDrag: 0
   maxSpeed: 150

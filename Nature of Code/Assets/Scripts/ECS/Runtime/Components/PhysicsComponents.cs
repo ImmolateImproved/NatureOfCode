@@ -72,14 +72,14 @@ public readonly partial struct PhysicsBodyAspect : IAspect
         get => physicsData.ValueRO;
     }
 
-    public void ApplyVelocity(ref Translation translation, float deltaTime)
+    public void ApplyVelocity(ref LocalTransform transform, float deltaTime)
     {
         var acceleration = ResultantForce / PhysicsData.mass;
 
         Velocity += acceleration;// * deltaTime;
         Velocity = MathUtils.ClampMagnitude(Velocity, MaxSpeed);
 
-        translation.Value += Velocity * deltaTime;
+        transform.Position += Velocity * deltaTime;
 
         ResultantForce = 0;
     }
@@ -91,9 +91,9 @@ public readonly partial struct PhysicsBodyAspect : IAspect
         ResultantForce += weight;
     }
 
-    public void AddFriction(in Translation translation, in NonUniformScale scale, in SquareWorldBounds worldBoundaries)
+    public void AddFriction(in LocalTransform localTransform, in SquareWorldBounds worldBoundaries)
     {
-        var diff = (translation.Value.y - scale.Value.x / 2) + worldBoundaries.value.y;
+        var diff = (localTransform.Position.y - localTransform.Scale / 2) + worldBoundaries.value.y;
 
         if (diff < 1)
         {

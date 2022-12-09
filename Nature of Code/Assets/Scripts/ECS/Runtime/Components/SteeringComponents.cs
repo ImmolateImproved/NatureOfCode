@@ -23,12 +23,12 @@ public struct SteeringData : IBufferElementData
 public readonly partial struct SteeringAgentAspect : IAspect
 {
     readonly RefRW<SteeringForce> steeringForce;
-    readonly RefRO<Translation> translation;
+    readonly RefRO<LocalTransform> transfrom;
     readonly RefRO<Velocity> velocity;
 
     public void Steer(in SteeringDNA steeringDNA, float3 targetPosition)
     {
-        var force = targetPosition - translation.ValueRO.Value;
+        var force = targetPosition - transfrom.ValueRO.Position;
 
         var distance = math.length(force);
 

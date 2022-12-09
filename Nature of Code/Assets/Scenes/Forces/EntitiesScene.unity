@@ -197,10 +197,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gravity: -0.4
-  windMultiplayer: {x: 1, y: 1, z: 0}
-  G: 6
-  minAttractionDistance: 100
-  maxAttractionDistance: 1000
+  windMultiplayer: {x: 0.1, y: 0.1, z: 0}
+  G: 1
+  minAttractionDistance: 5
+  maxAttractionDistance: 100
 --- !u!4 &541464919
 Transform:
   m_ObjectHideFlags: 0
@@ -264,7 +264,7 @@ MonoBehaviour:
   count: 15
   startSpeed: 1
   minRadius: 10
-  maxRadius: 10
+  maxRadius: 20
 --- !u!1001 &1149367327
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -279,7 +279,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1149125909884641230, guid: 6c4f6df7096a2bd42aef0ae8f0609142, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1640846215853103007, guid: 6c4f6df7096a2bd42aef0ae8f0609142, type: 3}
+      propertyPath: mass
+      value: 55
       objectReference: {fileID: 0}
     - target: {fileID: 1640846215853103007, guid: 6c4f6df7096a2bd42aef0ae8f0609142, type: 3}
       propertyPath: maxAttractionDistance
@@ -291,7 +295,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8853982071463936265, guid: 6c4f6df7096a2bd42aef0ae8f0609142, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 12.45
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 8853982071463936265, guid: 6c4f6df7096a2bd42aef0ae8f0609142, type: 3}
       propertyPath: m_LocalPosition.y
@@ -396,6 +400,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1640846215853103007, guid: 6c4f6df7096a2bd42aef0ae8f0609142, type: 3}
+      propertyPath: mass
+      value: 55
+      objectReference: {fileID: 0}
+    - target: {fileID: 1640846215853103007, guid: 6c4f6df7096a2bd42aef0ae8f0609142, type: 3}
       propertyPath: maxAttractionDistance
       value: 1000
       objectReference: {fileID: 0}
@@ -405,7 +413,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8853982071463936265, guid: 6c4f6df7096a2bd42aef0ae8f0609142, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -12.57
+      value: -25
       objectReference: {fileID: 0}
     - target: {fileID: 8853982071463936265, guid: 6c4f6df7096a2bd42aef0ae8f0609142, type: 3}
       propertyPath: m_LocalPosition.y

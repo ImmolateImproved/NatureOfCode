@@ -7,15 +7,14 @@ using Unity.Transforms;
 [UpdateAfter(typeof(ApplyForceSystem))]
 public partial struct RotateTowardsVelocitySystem : ISystem
 {
-    [BurstCompile]
     public void OnCreate(ref SystemState state)
     {
 
     }
 
-    [BurstCompile]
     public void OnDestroy(ref SystemState state)
     {
+
     }
 
     [BurstCompile]
@@ -34,7 +33,7 @@ public partial struct RotateTowardsVelocitySystem : ISystem
         {
             var lookDir = velocity.value;
             float angle = math.atan2(lookDir.y, lookDir.x);
-            transform.Rotation = quaternion.Euler(0, 0, angle);
+            transform.LocalRotation = quaternion.Euler(0, 0, angle);
         }
     }
 }

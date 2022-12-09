@@ -35,28 +35,28 @@ public partial struct WorldBoundsSystem : ISystem
     {
         public float2 bounds;
 
-        public void Execute(ref Translation translation, ref Velocity velocity)
+        public void Execute(ref LocalTransform transform, ref Velocity velocity)
         {
-            if (translation.Value.x >= bounds.x)
+            if (transform.Position.x >= bounds.x)
             {
-                translation.Value.x = bounds.x;
+                transform.Position.x = bounds.x;
                 velocity.value.x *= -1;
             }
-            else if (translation.Value.x <= -bounds.x)
+            else if (transform.Position.x <= -bounds.x)
             {
-                translation.Value.x = -bounds.x;
+                transform.Position.x = -bounds.x;
                 velocity.value.x *= -1;
             }
 
-            if (translation.Value.y >= bounds.y)
+            if (transform.Position.y >= bounds.y)
             {
-                translation.Value.y = bounds.y;
+                transform.Position.y = bounds.y;
                 velocity.value.y *= -1;
             }
 
-            if (translation.Value.y <= -bounds.y)
+            if (transform.Position.y <= -bounds.y)
             {
-                translation.Value.y = -bounds.y;
+                transform.Position.y = -bounds.y;
                 velocity.value.y *= -1;
             }
         }

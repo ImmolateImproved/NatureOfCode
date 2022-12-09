@@ -10,7 +10,7 @@ public partial class AttractorSystem : SystemBase
 
     protected override void OnCreate()
     {
-        attractorsQuery = GetEntityQuery(typeof(Attractor), typeof(Translation), typeof(PhysicsData));
+        attractorsQuery = GetEntityQuery(typeof(Attractor), typeof(LocalTransform), typeof(PhysicsData));
 
         RequireAnyForUpdate(attractorsQuery);
         RequireForUpdate<GlobalForceSettings>();
@@ -19,13 +19,13 @@ public partial class AttractorSystem : SystemBase
     protected override void OnUpdate()
     {
         var attractorEntities = attractorsQuery.ToEntityArray(Allocator.Temp);
-        var attractorPositions = attractorsQuery.ToComponentDataArray<Translation>(Allocator.Temp);
+        var attractorPositions = attractorsQuery.ToComponentDataArray<LocalTransform>(Allocator.Temp);
         var attractorDatas = attractorsQuery.ToComponentDataArray<PhysicsData>(Allocator.Temp);
 
-        var physicsSettings = GetSingleton<GlobalForceSettings>();
+        var physicsSettings = SystemAPI.GetSingleton<GlobalForceSettings>();
 
         Entities.WithAll<ApplyNaturalForces>()
-            .ForEach((Entity e, ref ResultantForce resultantForce, in PhysicsData physicsData, in Translation translation) =>
+            .ForEach((Entity e, ref ResultantForce resultantForce, in PhysicsData physicsData, in LocalTransform transform) =>
             {
                 for (int i = 0; i < attractorEntities.Length; i++)
                 {
@@ -35,7 +35,7 @@ public partial class AttractorSystem : SystemBase
                     var attractorPos = attractorPositions[i];
                     var attractorData = attractorDatas[i];
 
-                    var force = (attractorPos.Value - translation.Value);
+                    var force = (attractorPos.Position - transform.Position);
                     var dist = math.lengthsq(force);
 
                     dist = math.clamp(dist, physicsSettings.minAttractionDistance, physicsSettings.maxAttractionDistance);

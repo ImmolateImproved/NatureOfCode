@@ -153,17 +153,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnerType: 0
-  minPosition: {x: -100, y: -50, z: 0}
-  maxPosition: {x: 100, y: 50, z: 0}
+  minPosition: {x: -1000, y: -500, z: 0}
+  maxPosition: {x: 1000, y: 500, z: 0}
   maxRadius: 30
   offset: {x: 0, y: 0, z: 0}
   spawnRequests:
   - prefab: {fileID: 2943935801606489530, guid: 6d147390a7ace54489ddde001c85a391, type: 3}
-    count: 1000
+    count: 50000
   - prefab: {fileID: 2140678988757800765, guid: 4ace277525b03a54c8e6bd081f7935c5, type: 3}
-    count: 100
+    count: 5000
   - prefab: {fileID: 2943935801606489530, guid: d57a643065b8c0d43a574667f58fd33c, type: 3}
-    count: 25
+    count: 10000
 --- !u!4 &572046710
 Transform:
   m_ObjectHideFlags: 0
@@ -223,4 +223,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0032820aa785ee40b37a1aaefd319d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bounds: {x: 100, y: 50}
+  bounds: {x: 1000, y: 500}

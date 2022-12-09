@@ -24,13 +24,13 @@ public partial struct DestroyNearestTargetSystem : ISystem
         var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
 
-        var translationLookup = SystemAPI.GetComponentLookup<Translation>(true);
+        var transformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true);
         var targetInRangeLookup = SystemAPI.GetComponentLookup<TargetInRangeTag>();
 
         state.Dependency = new DestroyNearestTargetJob
         {
             ecb = ecb.AsParallelWriter(),
-            translationLookup = translationLookup,
+            transformLookup = transformLookup,
             targetInRangeLookup = targetInRangeLookup
 
         }.ScheduleParallel(state.Dependency);
@@ -41,23 +41,23 @@ public partial struct DestroyNearestTargetSystem : ISystem
     partial struct DestroyNearestTargetJob : IJobEntity
     {
         [ReadOnly]
-        public ComponentLookup<Translation> translationLookup;
+        public ComponentLookup<LocalTransform> transformLookup;
 
         [NativeDisableParallelForRestriction]
         public ComponentLookup<TargetInRangeTag> targetInRangeLookup;
 
         public EntityCommandBuffer.ParallelWriter ecb;
 
-        public void Execute(Entity e, [ChunkIndexInQuery] int chunkIndex, in Translation translation, in DynamicBuffer<TargetSeeker> targetSeeker)
+        public void Execute(Entity e, [ChunkIndexInQuery] int chunkIndex, in LocalTransform transform, in DynamicBuffer<TargetSeeker> targetSeeker)
         {
             for (int i = 0; i < targetSeeker.Length; i++)
             {
                 var target = targetSeeker[i].target;
 
-                if (!translationLookup.HasComponent(target))
+                if (!transformLookup.HasComponent(target))
                     continue;
 
-                var dist = math.distance(translation.Value, translationLookup[target].Value);
+                var dist = math.distance(transform.Position, transformLookup[target].Position);
 
                 if (dist < 1)
                 {

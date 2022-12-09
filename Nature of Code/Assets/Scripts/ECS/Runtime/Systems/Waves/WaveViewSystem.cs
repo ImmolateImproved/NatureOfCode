@@ -1,4 +1,5 @@
-﻿using Unity.Entities;
+﻿using Unity.Collections;
+using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Transforms;
@@ -9,7 +10,7 @@ public partial class WaveViewSystem : SystemBase
 {
     protected override void OnUpdate()
     {
-        var translationLookup = GetComponentLookup<Translation>();
+        var transfromLookup = GetComponentLookup<LocalTransform>();
 
         Entities.ForEach((in DynamicBuffer<WaveView> waveElements, in DynamicBuffer<WaveElementPosition> waveElementPositions) =>
         {
@@ -23,20 +24,18 @@ public partial class WaveViewSystem : SystemBase
 
                 for (int j = 0; j < waveElementsList.Length; j++)
                 {
-                    var waveElementPos = translationLookup[waveElementsList[j]];
+                    ref var waveElementPos = ref transfromLookup.GetRefRW(waveElementsList[j], false).ValueRW.Position;
 
-                    waveElementPos.Value.y = waveElementsPosList[j].y;
-
-                    translationLookup[waveElementsList[j]] = waveElementPos;
+                    waveElementPos.y = waveElementsPosList[j].y;
                 }
             }
 
         }).Run();
 
         Entities.WithAll<WaveElementTag>()
-            .ForEach((ref URPMaterialPropertyBaseColor color, in Translation translation) =>
+            .ForEach((ref URPMaterialPropertyBaseColor color, in LocalTransform transfrom) =>
             {
-                var yPos = math.remap(-15, 15, 0, 1, translation.Value.y);
+                var yPos = math.remap(-15, 15, 0, 1, transfrom.Position.y);
 
                 color.Value = (Vector4)Color.HSVToRGB(yPos, 1, 1);
 
